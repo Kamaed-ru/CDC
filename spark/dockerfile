@@ -1,0 +1,32 @@
+FROM apache/spark:3.5.7-scala2.12-java17-python3-ubuntu
+
+USER root
+
+ENV HADOOP_AWS_VERSION=3.3.4
+ENV AWS_SDK_VERSION=1.12.367
+ENV POSTGRES_JDBC_VERSION=42.7.4
+ENV SPARK_KAFKA_VERSION=3.5.7
+ENV KAFKA_CLIENTS_VERSION=3.5.1
+ENV COMMONS_POOL2_VERSION=2.11.1
+
+RUN curl -fSL https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_AWS_VERSION}/hadoop-aws-${HADOOP_AWS_VERSION}.jar \
+      -o /opt/spark/jars/hadoop-aws-${HADOOP_AWS_VERSION}.jar && \
+    curl -fSL https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/${AWS_SDK_VERSION}/aws-java-sdk-bundle-${AWS_SDK_VERSION}.jar \
+      -o /opt/spark/jars/aws-java-sdk-bundle-${AWS_SDK_VERSION}.jar && \
+    curl -fSL https://jdbc.postgresql.org/download/postgresql-${POSTGRES_JDBC_VERSION}.jar \
+      -o /opt/spark/jars/postgresql-${POSTGRES_JDBC_VERSION}.jar && \
+    curl -fSL https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/${SPARK_KAFKA_VERSION}/spark-sql-kafka-0-10_2.12-${SPARK_KAFKA_VERSION}.jar \
+      -o /opt/spark/jars/spark-sql-kafka-0-10_2.12-${SPARK_KAFKA_VERSION}.jar && \
+    curl -fSL https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/${SPARK_KAFKA_VERSION}/spark-token-provider-kafka-0-10_2.12-${SPARK_KAFKA_VERSION}.jar \
+      -o /opt/spark/jars/spark-token-provider-kafka-0-10_2.12-${SPARK_KAFKA_VERSION}.jar && \
+    curl -fSL https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/${KAFKA_CLIENTS_VERSION}/kafka-clients-${KAFKA_CLIENTS_VERSION}.jar \
+      -o /opt/spark/jars/kafka-clients-${KAFKA_CLIENTS_VERSION}.jar && \
+    curl -fSL https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/${COMMONS_POOL2_VERSION}/commons-pool2-${COMMONS_POOL2_VERSION}.jar \
+      -o /opt/spark/jars/commons-pool2-${COMMONS_POOL2_VERSION}.jar
+
+COPY spark_jobs/ /opt/spark_jobs/
+
+ENV SPARK_HOME=/opt/spark
+ENV PATH=$SPARK_HOME/bin:$PATH
+
+USER spark
