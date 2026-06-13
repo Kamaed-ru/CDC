@@ -64,8 +64,15 @@ services:
       --firstname ${AIRFLOW_ADMIN_FIRSTNAME} \
       --lastname ${AIRFLOW_ADMIN_LASTNAME} \
       --role Admin \
-      --email ${AIRFLOW_ADMIN_EMAIL}
+      --email ${AIRFLOW_ADMIN_EMAIL} &&
 
+      airflow connections add clickhouse_default \
+      --conn-type sqlite \
+      --conn-host "$CLICKHOUSE_HOST" \
+      --conn-login "$CLICKHOUSE_USER" \
+      --conn-password "$CLICKHOUSE_PASSWORD" \
+      --conn-port "9000" \
+      --conn-schema "$CLICKHOUSE_DB"
       "
     restart: "no"
   
@@ -225,6 +232,27 @@ services:
         condition: service_started
 
     restart: unless-stopped
+
+  clickhouse:
+    image: clickhouse:25.8
+    container_name: clickhouse
+    environment:
+      - CLICKHOUSE_HOST=${CLICKHOUSE_HOST}
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+    ulimits:
+      nofile:
+        soft: 202144
+        hard: 202144
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+      - ./clickhouse:/docker-entrypoint-initdb.d
+    ports:
+      - "${CLICKHOUSE_PORT}:9000"   # Native TCP ClickHouse
+      - "8123:8123"                # HTTP интерфейс
+      - "9009:9009"                # Интерфейс для SQL через CLI / драйверы
 
 volumes:
   postgres_data:

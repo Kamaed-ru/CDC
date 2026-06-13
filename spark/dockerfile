@@ -8,6 +8,7 @@ ENV POSTGRES_JDBC_VERSION=42.7.4
 ENV SPARK_KAFKA_VERSION=3.5.7
 ENV KAFKA_CLIENTS_VERSION=3.5.1
 ENV COMMONS_POOL2_VERSION=2.11.1
+ENV CLICKHOUSE_JDBC_VERSION=0.6.3
 
 RUN curl -fSL https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_AWS_VERSION}/hadoop-aws-${HADOOP_AWS_VERSION}.jar \
       -o /opt/spark/jars/hadoop-aws-${HADOOP_AWS_VERSION}.jar && \
@@ -22,7 +23,9 @@ RUN curl -fSL https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADO
     curl -fSL https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/${KAFKA_CLIENTS_VERSION}/kafka-clients-${KAFKA_CLIENTS_VERSION}.jar \
       -o /opt/spark/jars/kafka-clients-${KAFKA_CLIENTS_VERSION}.jar && \
     curl -fSL https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/${COMMONS_POOL2_VERSION}/commons-pool2-${COMMONS_POOL2_VERSION}.jar \
-      -o /opt/spark/jars/commons-pool2-${COMMONS_POOL2_VERSION}.jar
+      -o /opt/spark/jars/commons-pool2-${COMMONS_POOL2_VERSION}.jar && \
+    curl -fSL https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/${CLICKHOUSE_JDBC_VERSION}/clickhouse-jdbc-${CLICKHOUSE_JDBC_VERSION}-all.jar \
+      -o /opt/spark/jars/clickhouse-jdbc-${CLICKHOUSE_JDBC_VERSION}.jar
 
 COPY spark_jobs/ /opt/spark_jobs/
 

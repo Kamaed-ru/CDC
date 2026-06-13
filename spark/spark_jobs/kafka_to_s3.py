@@ -68,7 +68,6 @@ parsed_df = (
     .select("data.*")
     .withColumn("event_ts", to_timestamp("event_time"))
     .withColumn("event_date", to_date("event_ts"))
-    .withColumn("event_hour", hour("event_ts"))
 )
 
 query = (
